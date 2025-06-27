@@ -1,0 +1,102 @@
+server:
+  port: 8090
+
+spring:
+  # MySQL数据库配置
+  datasource:
+    url: jdbc:mysql://localhost:3306/apartment_management?useUnicode=true&characterEncoding=utf-8&serverTimezone=Asia/Shanghai&useSSL=false&allowPublicKeyRetrieval=true&zeroDateTimeBehavior=convertToNull
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: root
+    password: 123456
+    # 禁用SQL初始化脚本
+    initialization-mode: never
+    # HikariCP连接池配置
+    hikari:
+      maximum-pool-size: 20
+      minimum-idle: 5
+      connection-timeout: 30000
+      idle-timeout: 600000
+      max-lifetime: 1800000
+      leak-detection-threshold: 60000
+  jpa:
+    database-platform: org.hibernate.dialect.MySQL8Dialect
+    hibernate:
+      ddl-auto: none # 禁用自动创建表
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        # 启用二级缓存
+        cache:
+          use_second_level_cache: false
+        # 批量操作配置
+        jdbc:
+          batch_size: 20
+          batch_versioned_data: true
+        # 查询优化
+        order_inserts: true
+        order_updates: true
+        # 连接释放模式
+        connection:
+          release_mode: after_transaction
+  # CORS配置
+  web:
+    cors:
+      allowed-origins: "*"
+      allowed-methods: GET,POST,PUT,DELETE,OPTIONS
+      allowed-headers: "*"
+      max-age: 3600
+  # 文件上传配置
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 10MB
+      max-request-size: 20MB
+
+# JWT配置
+jwt:
+  secret: your_jwt_secret_key_here_make_it_long_and_secure_for_production_use
+  access-token-expiration: 7200 # 秒, 2小时
+  refresh-token-expiration: 604800 # 秒, 7天
+
+# 自定义配置
+app:
+  # 系统默认配置
+  defaults:
+    logo-url: https://example.com/default-logo.png
+    avatar-url: https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png
+  # 上传路径配置
+  uploads:
+    base-path: uploads
+    avatar-path: ${app.uploads.base-path}/avatars
+    property-image-path: ${app.uploads.base-path}/properties
+    id-card-path: ${app.uploads.base-path}/idcards
+  # 水电费费率配置
+  utility-rates:
+    water-rate: 5.00
+    electricity-rate: 0.50
+    gas-rate: 3.00
+  # 押金配置
+  deposit:
+    default-rate: 1.0 # 默认押金为月租金的倍数
+  # 文件访问URL前缀
+  file-access-url: http://localhost:8090/api/v1/uploads
+
+# 文件上传配置
+file:
+  upload:
+    dir: uploads
+    url:
+      prefix: /api/v1
+
+# 日志配置
+logging:
+  level:
+    root: INFO
+    com.apartment: DEBUG
+    org.springframework.security: DEBUG
+    org.springframework.web: DEBUG
+    org.springframework.beans: DEBUG
+    org.springframework.context: DEBUG
+    org.hibernate.SQL: DEBUG
+    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
